@@ -12,10 +12,10 @@ You can use these operators to construct a clause. Other characters are not supp
 - EQUIVALENT `⇔`
 
 ### Example Inputs
-- α⇒¬¬α
-- ((p⇒q)∧(q⇒r)∧(r⇒p))⇔((p⇔q)∧(q⇔r))
-- ((α⇒β)∧α)⇒β
-- (¬α∧¬β∧¬γ)∨(α∧¬β∧γ)∨(α∧β∧γ)
+- `α⇒¬¬α`
+- `((p⇒q)∧(q⇒r)∧(r⇒p))⇔((p⇔q)∧(q⇔r))`
+- `((α⇒β)∧α)⇒β`
+- `(¬α∧¬β∧¬γ)∨(α∧¬β∧γ)∨(α∧β∧γ)`
 
 ### Example Output
 ```
