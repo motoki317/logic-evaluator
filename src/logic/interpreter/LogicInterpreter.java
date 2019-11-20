@@ -1,10 +1,10 @@
 package logic.interpreter;
 
-import logic.base.Clause;
+import logic.base.Sentence;
 import logic.base.Operator;
-import logic.clause.BinaryClause;
-import logic.clause.UnaryClause;
-import logic.clause.ValueClause;
+import logic.sentence.BinarySentence;
+import logic.sentence.UnarySentence;
+import logic.sentence.ValueSentence;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -13,7 +13,7 @@ public class LogicInterpreter {
     private String input;
 
     private Map<String, AtomicBoolean> variables;
-    private Clause clause;
+    private Sentence sentence;
 
     public LogicInterpreter(String input) {
         this.input = input;
@@ -24,8 +24,8 @@ public class LogicInterpreter {
         this.evaluate();
     }
 
-    public Clause getInterpretedClause() {
-        return this.clause;
+    public Sentence getInterpretedSentence() {
+        return this.sentence;
     }
 
     /**
@@ -37,7 +37,7 @@ public class LogicInterpreter {
      */
     public Map<String, Boolean> checkSatisfiable() {
         List<Map.Entry<String, AtomicBoolean>> variablesList = new ArrayList<>(this.variables.entrySet());
-        boolean result = dfsSatisfiable(this.clause, variablesList, 0);
+        boolean result = dfsSatisfiable(this.sentence, variablesList, 0);
         if (result) {
             variablesList.forEach((e) -> this.variables.put(e.getKey(), e.getValue()));
             return this.getSimpleVariablesMap();
@@ -54,7 +54,7 @@ public class LogicInterpreter {
      */
     public Map<String, Boolean> checkTautology() {
         List<Map.Entry<String, AtomicBoolean>> variablesList = new ArrayList<>(this.variables.entrySet());
-        boolean result = dfsTautology(this.clause, variablesList, 0);
+        boolean result = dfsTautology(this.sentence, variablesList, 0);
         if (!result) {
             variablesList.forEach((e) -> this.variables.put(e.getKey(), e.getValue()));
             return this.getSimpleVariablesMap();
@@ -72,54 +72,54 @@ public class LogicInterpreter {
      * Checks if the given logic is satisfiable using depth-first-search algorithm.
      * Stops the search as soon as one satisfiable condition is found.
      * If then, example that satisfies the logic is stored in the given "variables" variable.
-     * @param clause Logic to check.
+     * @param sentence Logic to check.
      * @param variables List of variables.
      * @param depth Current depth. Input 0 to start the search.
      * @return True if this logic is satisfiable.
      */
-    private static boolean dfsSatisfiable(Clause clause, List<Map.Entry<String, AtomicBoolean>> variables, int depth) {
+    private static boolean dfsSatisfiable(Sentence sentence, List<Map.Entry<String, AtomicBoolean>> variables, int depth) {
         if (depth == variables.size()) {
-            return clause.value();
+            return sentence.value();
         }
 
         AtomicBoolean variable = variables.get(depth).getValue();
         variable.set(false);
-        boolean result = dfsSatisfiable(clause, variables, depth + 1);
+        boolean result = dfsSatisfiable(sentence, variables, depth + 1);
         if (result) return true;
 
         variable.set(true);
-        return dfsSatisfiable(clause, variables, depth + 1);
+        return dfsSatisfiable(sentence, variables, depth + 1);
     }
 
     /**
      * Checks if the given logic is a tautology, by checking for all combination of variables.
      * Stops the search as soon as one counter example is found.
      * If then, the counter example is stored in the given "variables" variable.
-     * @param clause Logic to check.
+     * @param sentence Logic to check.
      * @param variables List of variables.
      * @param depth Current depth. Input 0 to start the search.
      * @return True if this logic is a tautology.
      */
-    private static boolean dfsTautology(Clause clause, List<Map.Entry<String, AtomicBoolean>> variables, int depth) {
+    private static boolean dfsTautology(Sentence sentence, List<Map.Entry<String, AtomicBoolean>> variables, int depth) {
         if (depth == variables.size()) {
-            return clause.value();
+            return sentence.value();
         }
 
         AtomicBoolean variable = variables.get(depth).getValue();
         variable.set(false);
-        boolean result = dfsTautology(clause, variables, depth + 1);
+        boolean result = dfsTautology(sentence, variables, depth + 1);
         if (!result) return false;
 
         variable.set(true);
-        return dfsTautology(clause, variables, depth + 1);
+        return dfsTautology(sentence, variables, depth + 1);
     }
 
     /**
-     * Evaluates the input, and records the result to "clause" field.
+     * Evaluates the input, and records the result to "sentence" field.
      * To be called once.
      */
     private void evaluate() {
-        if (this.clause != null) {
+        if (this.sentence != null) {
             return;
         }
 
@@ -143,24 +143,24 @@ public class LogicInterpreter {
             this.createVariable(varName);
         }
 
-        this.clause = interpretClause(this.input, this.variables);
+        this.sentence = interpretSentence(this.input, this.variables);
     }
 
     private void createVariable(String varName) {
         this.variables.put(varName, new AtomicBoolean());
     }
 
-    private static Clause interpretClause(String input, Map<String, AtomicBoolean> variables) {
+    private static Sentence interpretSentence(String input, Map<String, AtomicBoolean> variables) {
         // Check if given input is variable
         if (isVariableName(input)) {
-            return new ValueClause(input, variables.get(input));
+            return new ValueSentence(input, variables.get(input));
         }
 
         // Check if given input is closed with parentheses
         if (input.charAt(0) == '('
                 && input.charAt(input.length()-1) == ')'
                 && getClosingParenthesisIndex(input, 0) == input.length()-1) {
-            return interpretClause(input.substring(1, input.length()-1), variables);
+            return interpretSentence(input.substring(1, input.length()-1), variables);
         }
 
         char[] chars = input.toCharArray();
@@ -205,20 +205,20 @@ public class LogicInterpreter {
                         continue;
                     }
 
-                    Clause clause = interpretClause(input.substring(1), variables);
-                    return new UnaryClause(clause, op);
+                    Sentence sentence = interpretSentence(input.substring(1), variables);
+                    return new UnarySentence(sentence, op);
                 case AND:
                 case OR:
                 case IMPLY:
                 case EQUIV:
                     int location = operatorIndices.get(op);
-                    Clause firstClause = interpretClause(input.substring(0, location), variables);
-                    Clause secondClause = interpretClause(input.substring(location+1), variables);
-                    return new BinaryClause(firstClause, op, secondClause);
+                    Sentence firstSentence = interpretSentence(input.substring(0, location), variables);
+                    Sentence secondSentence = interpretSentence(input.substring(location+1), variables);
+                    return new BinarySentence(firstSentence, op, secondSentence);
             }
         }
 
-        throw new Error("Internal error on interpreting a clause: " + input);
+        throw new Error("Internal error on interpreting a sentence: " + input);
     }
 
     private boolean hasValidParentheses() {
@@ -277,7 +277,7 @@ public class LogicInterpreter {
     /**
      * Checks if the given string is a variable name. <br>
      * Examples: <br>
-     * (a∧b) -> false (This is a clause)
+     * (a∧b) -> false (This is a sentence)
      * a -> true
      * @param input String to check.
      * @return True if the given string is a variable name.

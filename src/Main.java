@@ -23,7 +23,7 @@ public class Main {
         LogicInterpreter interpreter = new LogicInterpreter(input);
 
         Map<String, Boolean> solution = interpreter.checkSatisfiable();
-        println("Evaluated: " + interpreter.getInterpretedClause().toString());
+        println("Evaluated: " + interpreter.getInterpretedSentence().toString());
 
         println("-----");
 

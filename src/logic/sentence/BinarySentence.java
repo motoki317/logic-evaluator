@@ -1,14 +1,14 @@
-package logic.clause;
+package logic.sentence;
 
-import logic.base.Clause;
+import logic.base.Sentence;
 import logic.base.Operator;
 
-public class BinaryClause implements Clause {
-    private Clause a;
-    private Clause b;
+public class BinarySentence implements Sentence {
+    private Sentence a;
+    private Sentence b;
     private Operator op;
 
-    public BinaryClause(Clause a, Operator op, Clause b) {
+    public BinarySentence(Sentence a, Operator op, Sentence b) {
         this.a = a;
         this.b = b;
         this.op = op;

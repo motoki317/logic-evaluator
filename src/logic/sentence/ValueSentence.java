@@ -1,14 +1,14 @@
-package logic.clause;
+package logic.sentence;
 
-import logic.base.Clause;
+import logic.base.Sentence;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class ValueClause implements Clause {
+public class ValueSentence implements Sentence {
     private final String name;
     private final AtomicBoolean value;
 
-    public ValueClause(String name, AtomicBoolean value) {
+    public ValueSentence(String name, AtomicBoolean value) {
         this.name = name;
         this.value = value;
     }

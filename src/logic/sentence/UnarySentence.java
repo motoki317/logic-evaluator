@@ -1,13 +1,13 @@
-package logic.clause;
+package logic.sentence;
 
-import logic.base.Clause;
+import logic.base.Sentence;
 import logic.base.Operator;
 
-public class UnaryClause implements Clause {
-    private Clause a;
+public class UnarySentence implements Sentence {
+    private Sentence a;
     private Operator op;
 
-    public UnaryClause(Clause a, Operator op) {
+    public UnarySentence(Sentence a, Operator op) {
         this.a = a;
         this.op = op;
     }
