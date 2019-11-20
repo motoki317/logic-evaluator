@@ -5,7 +5,7 @@ public enum Operator {
     AND('∧', "/\\", "&", "and"),
     OR('∨', "\\/", "|", "or"),
     IMPLY('⇒', "→", "->", "=>"),
-    EQUIV('⇔', "↔", "<->", "<=>"),;
+    EQUIV('⇔', "↔", "<->", "<=>", "="),;
 
     public final char ch;
     public final String[] replaceableTexts;
