@@ -2,8 +2,8 @@ package logic.base;
 
 public enum Operator {
     NOT('¬', "~", "not"),
-    AND('∧', "/\\", "and"),
-    OR('∨', "\\/", "or"),
+    AND('∧', "/\\", "&", "and"),
+    OR('∨', "\\/", "|", "or"),
     IMPLY('⇒', "→", "->", "=>"),
     EQUIV('⇔', "↔", "<->", "<=>"),;
 
