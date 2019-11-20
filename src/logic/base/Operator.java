@@ -1,16 +1,18 @@
 package logic.base;
 
 public enum Operator {
-    NOT('¬'),
-    AND('∧'),
-    OR('∨'),
-    IMPLY('⇒'),
-    EQUIV('⇔'),;
+    NOT('¬', "~", "not"),
+    AND('∧', "/\\", "and"),
+    OR('∨', "\\/", "or"),
+    IMPLY('⇒', "→", "->", "=>"),
+    EQUIV('⇔', "↔", "<->", "<=>"),;
 
     public final char ch;
+    public final String[] replaceableTexts;
 
-    Operator(char ch) {
+    Operator(char ch, String... replaceable) {
         this.ch = ch;
+        this.replaceableTexts = replaceable;
     }
 
     /**

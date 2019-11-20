@@ -10,18 +10,22 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class LogicInterpreter {
-    private String input;
+    private String text;
 
     private Map<String, AtomicBoolean> variables;
     private Sentence sentence;
 
     public LogicInterpreter(String input) {
-        this.input = input;
+        this.text = replaceTexts(input);
         if (!this.hasValidParentheses()) {
             throw new Error("Number of opening/closing parentheses do not match. Check the input.");
         }
         this.variables = new HashMap<>();
         this.evaluate();
+    }
+
+    public String getReplacedText() {
+        return this.text;
     }
 
     public Sentence getInterpretedSentence() {
@@ -123,7 +127,7 @@ public class LogicInterpreter {
             return;
         }
 
-        char[] chars = this.input.toCharArray();
+        char[] chars = this.text.toCharArray();
 
         boolean isVariable = false;
         int varStart = 0;
@@ -133,17 +137,17 @@ public class LogicInterpreter {
                 isVariable = true;
                 varStart = i;
             } else if (isVariable && !isVariableChar(ch)) {
-                String varName = this.input.substring(varStart, i);
+                String varName = this.text.substring(varStart, i);
                 this.createVariable(varName);
                 isVariable = false;
             }
         }
         if (isVariable) {
-            String varName = this.input.substring(varStart, chars.length);
+            String varName = this.text.substring(varStart, chars.length);
             this.createVariable(varName);
         }
 
-        this.sentence = interpretSentence(this.input, this.variables);
+        this.sentence = interpretSentence(this.text, this.variables);
     }
 
     private void createVariable(String varName) {
@@ -224,7 +228,7 @@ public class LogicInterpreter {
     private boolean hasValidParentheses() {
         int opens = 0;
         int closes = 0;
-        char[] chars = this.input.toCharArray();
+        char[] chars = this.text.toCharArray();
         for (char ch : chars) {
             if (ch == '(') opens++;
             if (ch == ')') closes++;
@@ -304,5 +308,27 @@ public class LogicInterpreter {
             if (op.ch == ch) return op;
         }
         throw new Error("Unknown operator: " + ch);
+    }
+
+    /**
+     * Replaces matching propositional operator texts, and removes spaces.
+     * For example, replaces ~ to ¬.
+     * @param original Original text.
+     * @return Replaced text.
+     */
+    private static String replaceTexts(String original) {
+        List<Operator> list = Arrays.asList(Operator.getOrderedValues());
+        Collections.reverse(list);
+        Operator[] operators = list.toArray(new Operator[]{});
+
+        String ret = original;
+
+        for (Operator op : operators) {
+            for (String replaceable : op.replaceableTexts) {
+                ret = ret.replace(replaceable, String.valueOf(op.ch));
+            }
+        }
+
+        return ret.replaceAll("\\s", "");
     }
 }

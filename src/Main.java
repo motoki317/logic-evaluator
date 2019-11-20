@@ -18,15 +18,17 @@ public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         System.out.print("Input: ");
-        String input = sc.next();
+        String input = sc.nextLine();
 
         LogicInterpreter interpreter = new LogicInterpreter(input);
-
-        Map<String, Boolean> solution = interpreter.checkSatisfiable();
+        if (!interpreter.getReplacedText().equals(input)) {
+            println("Replaced text: " + interpreter.getReplacedText());
+        }
         println("Evaluated: " + interpreter.getInterpretedSentence().toString());
 
         println("-----");
 
+        Map<String, Boolean> solution = interpreter.checkSatisfiable();
         println("This logic is " + (solution != null ? "" : "NOT ") + "satisfiable.");
         if (solution != null) {
             println("Possible solution: " + solution);

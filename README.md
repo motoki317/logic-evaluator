@@ -5,11 +5,11 @@ No algorithm for SAT solving used, this program directly checks all 2^n patterns
 
 ### Allowed Operators
 You can use these operators to construct a sentence. Other characters are not supported and will be considered variables.
-- NOT `¬`
-- AND `∧`
-- OR `∨`
-- IMPLY `⇒`
-- EQUIVALENT `⇔`
+- NOT `¬`, `~`, `not`
+- AND `∧`, `/\`, `and`
+- OR `∨`, `\/`, `or`
+- IMPLY `⇒`, `→`, `->`, `=>`
+- EQUIVALENT `⇔`, `↔`, `<->`, `<=>`
 
 ### Example Inputs
 - `α⇒¬¬α`
